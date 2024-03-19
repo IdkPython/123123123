@@ -1,0 +1,40 @@
+from bs4 import BeautifulSoup
+import requests
+import sqlite3
+import pandas as pd
+con = sqlite3.connect('C:\Program Files\database.db')  # подключение
+cur = con.cursor()  # курсор
+response = requests.get("https://www.restoran.ru/msk/catalog/restaurants/kitchen/georgian/?page=1")
+soup = BeautifulSoup(response.text, 'html.parser')
+a = []
+post = soup.find_all('a', {'class': 'name'})
+for e in post:
+    a.append(e.text)
+b = []
+post = soup.find_all('span', {'class': 'average-bill'})
+for c in post:
+    b.append(c.text)
+rate = []
+post = soup.find_all("div", {"class": "rating-round-bg"})
+for n in post:
+    rate.append(n.text)
+info = []
+post = soup.find_all("div",{"class":"prop"})
+for l in post:
+    info.append(l.text)
+print(a,*b,*rate,*info)
+#for i in a:
+#    cur.execute(f"""
+#        INSERT INTO name(name)
+#        VALUES({i})""")
+cur.execute("""
+CREATE TABLE name(
+Id INT IDENTITY PRIMARY KEY,
+Name TEXT)
+""")
+con.commit()
+cur.execute("""
+INSERT INTO name(name)
+VALUES("bebebe")
+""")
+con.commit()
